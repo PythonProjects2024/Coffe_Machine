@@ -44,16 +44,33 @@ def is_resources_sufficient(order_ingredients):
             return False
     return True
 
+def process_coins():
+    print("Please insert coins.")
+    total = int(input("How many quarters? ")) * 0.25
+    total += int(input("How many dimes? ")) * 0.10
+    total += int(input("How many nickels? ")) * 0.05
+    total += int(input("How many pennies? ")) * 0.01
+    return total
+
+
 def process_order(user_choice):
     global profit
     order = MENU[user_choice]
     if is_resources_sufficient(order["ingredients"]):
-        for item in order["ingredients"]:
-            resources[item] -= order["ingredients"][item]
-        profit += order["cost"]
-        print(f"Here is your {user_choice}. Enjoy!")
+        payment = process_coins()
+        if payment >= order["cost"]:
+            change = round(payment - order["cost"], 2)
+            profit += order["cost"]
+            for item in order["ingredients"]:
+                resources[item] -= order["ingredients"][item]
+            print(f"Here is your {user_choice}. Enjoy!")
+            if change > 0:
+                print(f"Here is ${change} in change.")
+        else:
+            print("Sorry, that's not enough money. Money refunded.")
     else:
         print("Order could not be processed due to insufficient resources.")
+
 
 
 def coffee_machine():
